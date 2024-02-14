@@ -1,6 +1,6 @@
 {
   "name": "picgo-plugin-img-amgl",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "阿木图床PicGo插件",
   "main": "src/index.js",
   "publishConfig": {
@@ -18,7 +18,7 @@
     "picgo-gui-plugin",
     "picgo-plugin"
   ],
-  "author": "阿木",
+  "author": "fluffyox",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^8.25.0",
