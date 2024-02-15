@@ -27,18 +27,18 @@ const handle = async ctx => {
   let output = ctx.output
 
 
-  function uploadPostOptions (fileName, uploadToken, imgBase64) {
-    const base64FileName = Buffer.from(`hello.png`, 'utf-8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_')
+  function buildUploadOptions (base64Image,upCrt) {
     return {
       method: 'POST',
-      url: `http://upload-z1.qiniup.com/putb64/-1/key/${base64FileName}`,
+      url: `http://upload-${upCrt.Region}.qiniup.com/putb64/-1`,
       headers: {
-        Authorization: `UpToken ${uploadToken}`,
+        Authorization: `UpToken ${upCrt.UpToken}`,
         'Content-Type': 'application/octet-stream'
       },
-      body: imgBase64
+      body: base64Image
     }
   }
+
   async function getUploadToken(fileName, accessToken) {
     const uploadTokenUrl = 'https://img.api.amgl.work/getUploadToken';
 
@@ -133,14 +133,14 @@ const handle = async ctx => {
     const imgList = ctx.output
     for (const img of imgList) {
       if (img.fileName && img.buffer) {
-        const uploadToken = await getUploadToken(img.fileName,accessToken);
-        const base64Image = img.base64Image || Buffer.from(img.buffer).toString('base64')
-        const options = uploadPostOptions(uploadToken.fileName, uploadToken.uploadToken, base64Image)
+        const upCrt = await getUploadToken(img.fileName,accessToken);
+        const base64Image = img.base64Image || Buffer.from(img.buffer).toString('base64');
+        const options = buildUploadOptions(base64Image, upCrt);
         const res = await ctx.request(options);
         const data = JSON.parse(res);
         const imgUrl = data.url;
-        img.imgUrl = `${imgUrl}?imageView2/1/w/200/h/200/q/50`;
-        img.url = imgUrl;
+        img.imgUrl = `${imgUrl}`;
+        img.url = `${imgUrl}`;
       }
     }
     return ctx
